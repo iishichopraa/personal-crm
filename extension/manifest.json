@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Team CRM — LinkedIn Inbox",
+  "version": "1.0.0",
+  "description": "Prioritize LinkedIn threads that need your reply and sync meetings and follow-ups to Team CRM calendar.",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": [
+    "https://www.linkedin.com/*",
+    "https://*.supabase.co/*",
+    "http://localhost:3000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Team CRM LinkedIn"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.linkedin.com/messaging/*",
+        "https://www.linkedin.com/messaging"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "externally_connectable": {
+    "matches": ["http://localhost:3000/*", "http://127.0.0.1:3000/*"]
+  }
+}

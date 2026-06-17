@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team CRM</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div id="setup-screen" class="auth-screen hidden"></div>
+  <div id="auth-screen" class="auth-screen hidden"></div>
+  <div id="boot-screen" class="auth-screen">
+    <div class="auth-card" style="text-align:center">
+      <div class="brand" style="justify-content:center;padding-bottom:1rem">
+        <span class="brand-icon">◆</span>
+        <span class="brand-name">Team CRM</span>
+      </div>
+      <p>Loading…</p>
+    </div>
+  </div>
+
+  <div id="app-shell" class="app hidden">
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-icon">◆</span>
+        <span class="brand-name">Team CRM</span>
+      </div>
+      <div class="sidebar-team">
+        <span id="team-name-label">—</span>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="dashboard"><span class="nav-icon">▣</span> Dashboard</button>
+        <button class="nav-item" data-view="search"><span class="nav-icon">🔍</span> Search</button>
+        <button class="nav-item" data-view="contacts"><span class="nav-icon">◎</span> My contacts</button>
+        <button class="nav-item" data-view="companies"><span class="nav-icon">🏢</span> Companies</button>
+        <button class="nav-item" data-view="deals"><span class="nav-icon">$</span> Pipeline</button>
+        <button class="nav-item" data-view="tasks"><span class="nav-icon">✓</span> Tasks</button>
+        <button class="nav-item" data-view="linkedin"><span class="nav-icon">in</span> LinkedIn</button>
+        <button class="nav-item" data-view="transcripts"><span class="nav-icon">☎</span> Call priorities</button>
+        <button class="nav-item" data-view="reports"><span class="nav-icon">📊</span> Reports</button>
+        <button class="nav-item" data-view="settings"><span class="nav-icon">⚙</span> Settings</button>
+        <button class="nav-item admin-only hidden" data-view="team"><span class="nav-icon">★</span> Team overview</button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info" id="user-info">—</div>
+        <button class="btn btn-sm btn-secondary" id="sign-out-btn" style="width:100%;margin-top:0.5rem">Sign out</button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div id="member-tabs" class="member-tabs hidden"></div>
+      <header class="topbar">
+        <h1 id="page-title">Dashboard</h1>
+        <div class="topbar-actions" id="topbar-actions"></div>
+      </header>
+      <section class="content" id="content"></section>
+    </main>
+  </div>
+
+  <dialog id="modal">
+    <form id="modal-form" method="dialog">
+      <div class="modal-header">
+        <h2 id="modal-title"></h2>
+        <button type="button" class="btn-icon" id="modal-close" aria-label="Close">×</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="modal-cancel">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="modal-submit">Save</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+  <script src="js/config.js?v=21"></script>
+  <script src="js/api.js?v=21"></script>
+  <script src="js/crm-core.js?v=21"></script>
+  <script src="js/roles.js?v=21"></script>
+  <script src="js/views.js?v=21"></script>
+  <script src="js/app.js?v=21"></script>
+  <script src="js/auth.js?v=21"></script>
+</body>
+</html>

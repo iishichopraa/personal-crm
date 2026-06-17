@@ -1,0 +1,77 @@
+* { box-sizing: border-box; }
+body {
+  width: 380px;
+  max-height: 560px;
+  margin: 0;
+  font: 13px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #111;
+  background: #fafafa;
+}
+header {
+  padding: 12px 14px;
+  background: #0a66c2;
+  color: #fff;
+}
+header .sub { display: block; font-size: 11px; opacity: 0.9; margin-top: 2px; }
+.panel, #main { padding: 12px 14px; }
+.hidden { display: none !important; }
+.hint { font-size: 12px; color: #555; margin: 0 0 8px; }
+textarea {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px;
+  font: inherit;
+  resize: vertical;
+}
+.toolbar { display: flex; gap: 8px; margin-bottom: 8px; }
+.btn {
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font: inherit;
+  cursor: pointer;
+}
+.btn.primary { background: #0a66c2; color: #fff; border-color: #0a66c2; }
+.btn.ghost { padding: 6px 8px; }
+.btn.block { width: 100%; margin-top: 10px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.status { font-size: 12px; color: #666; margin: 0 0 10px; }
+.thread {
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  background: #fff;
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.thread summary {
+  list-style: none;
+  cursor: pointer;
+  padding: 10px 12px;
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+}
+.thread summary::-webkit-details-marker { display: none; }
+.thread-name { font-weight: 600; flex: 1; }
+.thread-preview { font-size: 12px; color: #666; margin-top: 4px; }
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+.badge.high { background: #fee2e2; color: #b91c1c; }
+.badge.medium { background: #fef3c7; color: #b45309; }
+.badge.low { background: #f3f4f6; color: #4b5563; }
+.thread-body {
+  padding: 0 12px 12px;
+  border-top: 1px solid #eee;
+  font-size: 12px;
+}
+.thread-body p { margin: 8px 0 0; }
+.thread-body label { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
+.meta { color: #555; }

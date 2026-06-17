@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team CRM LinkedIn</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header>
+    <strong>LinkedIn inbox</strong>
+    <span class="sub">People who replied — need your response</span>
+  </header>
+
+  <section id="setup" class="panel hidden">
+    <p class="hint">Open Team CRM → LinkedIn → <strong>Copy connection</strong>, then paste below.</p>
+    <textarea id="connection-json" rows="4" placeholder='Paste connection JSON…'></textarea>
+    <button id="save-connection" class="btn primary">Save connection</button>
+  </section>
+
+  <section id="main">
+    <div class="toolbar">
+      <button id="refresh" class="btn">Refresh inbox</button>
+      <button id="settings-toggle" class="btn ghost" title="Connection settings">⚙</button>
+    </div>
+    <p id="status" class="status">Open LinkedIn Messaging, then click Refresh.</p>
+    <div id="thread-list"></div>
+    <button id="sync-selected" class="btn primary block hidden">Add selected to CRM calendar</button>
+  </section>
+
+  <script src="config.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

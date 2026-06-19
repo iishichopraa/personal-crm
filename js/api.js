@@ -109,10 +109,18 @@ async function loadProfile() {
 async function signIn(email, password) {
   const sb = getSupabase();
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error) throw error;
+  if (error) throw formatAuthError(error);
   session = data.session;
   await loadProfile();
   return session;
+}
+
+function formatAuthError(error) {
+  const msg = error?.message || "Something went wrong";
+  if (/email not confirmed/i.test(msg)) {
+    return new Error("Sign-in blocked by email confirmation. In Supabase → Authentication → Providers → Email, turn off Confirm email.");
+  }
+  return error;
 }
 
 function hasTeam() {
@@ -169,7 +177,9 @@ async function signUp(email, password, fullName, { teamName, inviteCode } = {}) 
   if (error) throw error;
   session = data.session;
   if (!session) {
-    throw new Error("Check your email to confirm your account, then sign in.");
+    const { data: signInData, error: signInErr } = await sb.auth.signInWithPassword({ email, password });
+    if (signInErr) throw formatAuthError(signInErr);
+    session = signInData.session;
   }
   await loadProfile();
 

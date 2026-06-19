@@ -140,6 +140,13 @@ const companiesDB = {
     await logTimeline({ eventType: "system", title: `Company created: ${data.name}`, companyId: data.id });
     return data;
   },
+  async getOrCreateByName(name) {
+    const trimmed = (name || "").trim();
+    if (!trimmed) return null;
+    const existing = (await companiesDB.all()).find((co) => co.name.toLowerCase() === trimmed.toLowerCase());
+    if (existing) return existing;
+    return companiesDB.save({ name: trimmed });
+  },
   async contacts(companyId) {
     const sb = getSupabase();
     const { data } = await sb.from("contacts").select("*").eq("company_id", companyId).order("name");

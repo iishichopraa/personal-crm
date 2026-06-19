@@ -411,30 +411,33 @@ function contactRowHTML(c) {
 function openContactForm(id) {
   Promise.all([id ? contactsDB.get(id) : Promise.resolve({}), companiesDB.all()]).then(([contact, companies]) => {
     const c = contact || {};
-    const companyOptions = companies.map((co) =>
-      `<option value="${co.id}" ${c.companyId === co.id ? "selected" : ""}>${escapeHtml(co.name)}</option>`
-    ).join("");
+    const companyName = c.company || companies.find((co) => co.id === c.companyId)?.name || "";
+    const companySuggestions = companies.map((co) => `<option value="${escapeHtml(co.name)}">`).join("");
     openModal(id ? "Edit contact" : "New contact", `
       <div class="form-group"><label>Name *</label><input name="name" required value="${escapeHtml(c.name || "")}" /></div>
       <div class="form-row">
         <div class="form-group"><label>Email</label><input name="email" type="email" value="${escapeHtml(c.email || "")}" /></div>
         <div class="form-group"><label>Phone</label><input name="phone" type="tel" value="${escapeHtml(c.phone || "")}" /></div>
       </div>
-      <div class="form-row">
-        <div class="form-group"><label>Company</label><select name="companyId"><option value="">— None —</option>${companyOptions}</select></div>
-        <div class="form-group"><label>Legacy company text</label><input name="company" value="${escapeHtml(c.company || "")}" /></div>
+      <div class="form-group">
+        <label>Company</label>
+        <input name="company" list="contact-company-suggestions" value="${escapeHtml(companyName)}" placeholder="Type a company or pick from suggestions" />
+        <datalist id="contact-company-suggestions">${companySuggestions}</datalist>
+        <p class="task-meta">New companies are created automatically when you save.</p>
       </div>
       <div class="form-group"><label>Next action</label><input name="nextAction" value="${escapeHtml(c.nextAction || "")}" placeholder="What to do next" /></div>
       <div class="form-group"><label>Notes</label><textarea name="notes">${escapeHtml(c.notes || "")}</textarea></div>
       <input type="hidden" name="id" value="${c.id || ""}" />
     `, async (fd) => {
+      const companyNameInput = fd.get("company").trim();
+      const companyRow = companyNameInput ? await companiesDB.getOrCreateByName(companyNameInput) : null;
       await contactsDB.save({
         id: fd.get("id") || undefined,
         name: fd.get("name").trim(),
         email: fd.get("email").trim(),
         phone: fd.get("phone").trim(),
-        company: fd.get("company").trim(),
-        companyId: fd.get("companyId") || null,
+        company: companyNameInput,
+        companyId: companyRow?.id || null,
         nextAction: fd.get("nextAction").trim(),
         notes: fd.get("notes").trim(),
       });

@@ -50,9 +50,29 @@ body {
 
 .sidebar-ploid {
   margin: 0 -0.75rem 0.75rem;
-  padding: 0.9rem 0.75rem 0.75rem;
-  background: #000;
-  border-bottom: 1px solid #1a1a1a;
+  padding: 0.85rem 0.75rem 0.65rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.ploid-icon {
+  width: 2rem;
+  height: 2rem;
+  object-fit: contain;
+  flex-shrink: 0;
+  display: block;
+}
+
+.ploid-wordmark {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #e85d2c;
+  letter-spacing: -0.02em;
+  line-height: 1;
 }
 
 .ploid-logo {
@@ -63,20 +83,22 @@ body {
 }
 
 .ploid-brand {
-  background: #000;
-  border-radius: var(--radius);
-  padding: 0.75rem 1rem;
-  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0 0 1rem;
+  margin-bottom: 0;
 }
 
 .ploid-brand-center {
-  display: inline-block;
+  display: inline-flex;
   margin: 0 auto 1rem;
 }
 
-.ploid-brand .ploid-logo {
-  max-width: 132px;
-  margin: 0 auto;
+.ploid-brand .ploid-icon {
+  width: 2.25rem;
+  height: 2.25rem;
 }
 
 .brand {
@@ -1198,9 +1220,9 @@ dialog { max-width: 520px; }
 @media (max-width: 900px) {
   .settings-grid { grid-template-columns: 1fr; }
   .sidebar { width: 60px; padding-left: 0.35rem; padding-right: 0.35rem; }
-  .sidebar-ploid { margin-left: -0.35rem; margin-right: -0.35rem; padding: 0.5rem 0.35rem; }
-  .ploid-logo { max-width: 44px; }
-  .sidebar-team, .sidebar .brand-name, .sidebar .nav-item span:not(.nav-icon) { display: none; }
+  .sidebar-ploid { margin-left: -0.35rem; margin-right: -0.35rem; padding: 0.5rem 0.35rem; justify-content: center; }
+  .ploid-icon { width: 1.75rem; height: 1.75rem; }
+  .ploid-wordmark, .sidebar-team, .sidebar .brand-name, .sidebar .nav-item span:not(.nav-icon) { display: none; }
   .main { margin-left: 60px; }
   .pipeline { grid-template-columns: 1fr; }
   .grid-2 { grid-template-columns: 1fr; }

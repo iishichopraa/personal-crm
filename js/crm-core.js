@@ -16,7 +16,10 @@ function presetTeamSelectOptions(selectedSlug = DEFAULT_TEAM_SLUG) {
 }
 
 function ploidBrandHTML() {
-  return `<div class="ploid-brand"><img src="/assets/ploid-logo.png" alt="Ploid" class="ploid-logo" /></div>`;
+  return `<div class="ploid-brand">
+    <img src="/assets/ploid-icon.png" alt="" class="ploid-icon" />
+    <span class="ploid-wordmark">Ploid</span>
+  </div>`;
 }
 
 const DEFAULT_PIPELINE = [

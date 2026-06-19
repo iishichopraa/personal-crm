@@ -20,6 +20,7 @@ const TITLES = {
   companies: "Companies",
   reports: "Reports",
   settings: "Settings",
+  teams: "Teams",
   team: "Team overview",
 };
 
@@ -69,6 +70,7 @@ async function renderView() {
         await renderReports();
         break;
       case "settings": await renderSettings(); break;
+      case "teams": await renderTeams(); break;
       case "team": await renderTeam(); break;
     }
   } catch (err) {
@@ -1254,6 +1256,62 @@ async function uploadAndAnalyze(text, title, filename, assignedTo, sourceType = 
     alert("Failed: " + (e.message || e));
     render();
   }
+}
+
+// ── Teams (preset workspaces) ──
+
+async function renderTeams() {
+  const presetTeams = await listPresetTeamsWithMembers();
+  const currentSlug = getTeam()?.slug || "";
+
+  content.innerHTML = `
+    <div class="page-banner teams-banner">
+      <strong>Organization teams</strong>
+      <span>Switch workspace — contacts, deals, and tasks are scoped to your active team</span>
+    </div>
+    <div class="team-grid">
+      ${presetTeams.map((t) => {
+        const isActive = t.slug === currentSlug;
+        const memberPreview = t.members.slice(0, 6).map((m) =>
+          `<span class="team-member-chip">${escapeHtml(m.full_name || m.email || "Member")}</span>`
+        ).join("");
+        const extra = t.members.length > 6 ? `<span class="team-member-chip muted">+${t.members.length - 6} more</span>` : "";
+        return `
+        <details class="card team-card ${isActive ? "team-card-active" : ""}" ${isActive ? "open" : ""}>
+          <summary class="team-card-summary">
+            <span class="team-card-icon">${escapeHtml(t.icon || "◆")}</span>
+            <div class="team-card-head">
+              <strong>${escapeHtml(t.name)}</strong>
+              ${isActive ? `<span class="badge badge-won">Current</span>` : ""}
+              <p class="task-meta">${escapeHtml(t.description || "")}</p>
+              <p class="task-meta">${t.members.length} member${t.members.length === 1 ? "" : "s"}</p>
+            </div>
+          </summary>
+          <div class="card-body team-card-body">
+            ${t.members.length ? `<div class="team-member-list">${memberPreview}${extra}</div>` : `<p class="task-meta">No members yet.</p>`}
+            ${isActive
+              ? `<p class="task-meta">You're working in this team now.</p>`
+              : `<button type="button" class="btn btn-sm btn-primary" data-switch-team="${escapeHtml(t.slug)}">Switch to ${escapeHtml(t.name)}</button>`}
+          </div>
+        </details>`;
+      }).join("")}
+    </div>`;
+
+  content.querySelectorAll("[data-switch-team]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      btn.disabled = true;
+      try {
+        await switchTeam(btn.dataset.switchTeam);
+        document.getElementById("team-name-label").textContent = getTeam()?.name || "—";
+        navigate("dashboard");
+      } catch (err) {
+        btn.disabled = false;
+        alert(err.message || "Could not switch team");
+      }
+    });
+  });
+
+  topbarActions.innerHTML = "";
 }
 
 // ── Team dashboard ──

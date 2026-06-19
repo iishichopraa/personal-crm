@@ -112,6 +112,7 @@ async function signIn(email, password) {
   if (error) throw formatAuthError(error);
   session = data.session;
   await loadProfile();
+  await ensureDefaultTeam();
   return session;
 }
 
@@ -167,7 +168,63 @@ async function joinTeam(inviteCode) {
   return joinTeamRow;
 }
 
-async function signUp(email, password, fullName, { teamName, inviteCode } = {}) {
+async function joinTeamBySlug(slug) {
+  if (!session?.user?.id) throw new Error("Not signed in");
+  const teamSlug = (slug || DEFAULT_TEAM_SLUG).trim();
+  if (!PRESET_TEAM_SLUGS.includes(teamSlug)) throw new Error("Unknown team");
+  const sb = getSupabase();
+  const { data: row, error } = await sb.from("teams").select("*").eq("slug", teamSlug).maybeSingle();
+  if (error) throw error;
+  if (!row) {
+    throw new Error("Preset teams are not set up yet. Run supabase/migrations/20260620_preset_teams.sql in Supabase.");
+  }
+  const { error: profErr } = await sb
+    .from("profiles")
+    .update({ team_id: row.id, role: "member" })
+    .eq("id", session.user.id);
+  if (profErr) throw profErr;
+  await loadProfile();
+  return row;
+}
+
+async function ensureDefaultTeam() {
+  if (!session?.user?.id || hasTeam()) return null;
+  return joinTeamBySlug(DEFAULT_TEAM_SLUG);
+}
+
+async function switchTeam(slug) {
+  const row = await joinTeamBySlug(slug);
+  setViewingUserId(session.user.id);
+  return row;
+}
+
+async function listPresetTeamsWithMembers() {
+  const sb = getSupabase();
+  const { data: teams, error } = await sb.from("teams").select("*").in("slug", PRESET_TEAM_SLUGS);
+  if (error) throw error;
+  const teamIds = (teams || []).map((t) => t.id);
+  let profs = [];
+  if (teamIds.length) {
+    const { data, error: pErr } = await sb
+      .from("profiles")
+      .select("id, full_name, email, team_id, role")
+      .in("team_id", teamIds)
+      .order("full_name");
+    if (pErr) throw pErr;
+    profs = data || [];
+  }
+  return PRESET_TEAMS.map((meta) => {
+    const row = (teams || []).find((t) => t.slug === meta.slug);
+    if (!row) return { ...meta, members: [] };
+    return {
+      ...meta,
+      ...row,
+      members: profs.filter((p) => p.team_id === row.id),
+    };
+  });
+}
+
+async function signUp(email, password, fullName, { teamSlug } = {}) {
   const sb = getSupabase();
   const { data, error } = await sb.auth.signUp({
     email,
@@ -182,21 +239,11 @@ async function signUp(email, password, fullName, { teamName, inviteCode } = {}) 
     session = signInData.session;
   }
   await loadProfile();
-
-  if (teamName) {
-    await createTeam(teamName);
-    if (fullName) {
-      await sb.from("profiles").update({ full_name: fullName }).eq("id", session.user.id);
-      await loadProfile();
-    }
-  } else if (inviteCode) {
-    await joinTeam(inviteCode);
-    if (fullName) {
-      await sb.from("profiles").update({ full_name: fullName }).eq("id", session.user.id);
-      await loadProfile();
-    }
+  await joinTeamBySlug(teamSlug || DEFAULT_TEAM_SLUG);
+  if (fullName) {
+    await sb.from("profiles").update({ full_name: fullName }).eq("id", session.user.id);
+    await loadProfile();
   }
-
   return session;
 }
 

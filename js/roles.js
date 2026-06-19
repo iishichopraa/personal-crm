@@ -1,9 +1,9 @@
 const VIEW_ACCESS = {
-  admin: ["dashboard", "search", "contacts", "companies", "deals", "tasks", "transcripts", "linkedin", "reports", "settings", "team"],
-  sales: ["dashboard", "search", "contacts", "companies", "deals", "tasks", "transcripts", "linkedin", "reports"],
-  marketing: ["dashboard", "search", "contacts", "companies", "tasks", "reports"],
-  support: ["dashboard", "search", "contacts", "companies", "tasks", "transcripts", "linkedin"],
-  member: ["dashboard", "search", "contacts", "companies", "deals", "tasks", "transcripts", "linkedin", "reports"],
+  admin: ["dashboard", "search", "contacts", "companies", "deals", "tasks", "transcripts", "linkedin", "reports", "settings", "teams", "team"],
+  sales: ["dashboard", "search", "contacts", "companies", "deals", "tasks", "transcripts", "linkedin", "reports", "teams"],
+  marketing: ["dashboard", "search", "contacts", "companies", "tasks", "reports", "teams"],
+  support: ["dashboard", "search", "contacts", "companies", "tasks", "transcripts", "linkedin", "teams"],
+  member: ["dashboard", "search", "contacts", "companies", "deals", "tasks", "transcripts", "linkedin", "reports", "teams"],
 };
 
 function getUserRole() {

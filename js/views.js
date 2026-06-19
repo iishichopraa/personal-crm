@@ -5,7 +5,7 @@ async function renderCompanies() {
     content.innerHTML = `
       <div class="page-banner" style="background:#fef3c7;color:#92400e">
         <strong>Team workspace required</strong>
-        <span>Companies are shared across your team. Create a team or join with an invite code to continue.</span>
+        <span>Pick a team under Teams in the sidebar, or sign up and choose your squad.</span>
       </div>
       <div class="empty-state"><p>Reload the page if you just finished team setup.</p></div>`;
     topbarActions.innerHTML = "";

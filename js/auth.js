@@ -6,10 +6,7 @@ function renderSetupScreen() {
   setup.classList.remove("hidden");
   setup.innerHTML = `
     <div class="auth-card">
-      <div class="brand" style="justify-content:center;padding-bottom:1rem">
-        <span class="brand-icon">◆</span>
-        <span class="brand-name">Team CRM</span>
-      </div>
+      ${ploidBrandHTML()}
       <h2>Connect to Supabase</h2>
       <p class="auth-sub">This CRM runs in the cloud. Set up a free Supabase project, then add your credentials.</p>
       <ol class="setup-steps">
@@ -31,29 +28,18 @@ function renderAuthScreen(mode = "login") {
   const isSignup = mode === "signup";
   auth.innerHTML = `
     <div class="auth-card">
-      <div class="brand" style="justify-content:center;padding-bottom:1rem">
-        <span class="brand-icon">◆</span>
-        <span class="brand-name">Team CRM</span>
-      </div>
+      ${ploidBrandHTML()}
       <h2>${isSignup ? "Create account" : "Sign in"}</h2>
-      <p class="auth-sub">${isSignup ? "Start a new team or join with an invite code" : "Sign in to your workspace"}</p>
+      <p class="auth-sub">${isSignup ? "Pick your team — you'll land in that workspace automatically" : "Sign in to your workspace"}</p>
       <form id="auth-form" class="auth-form">
         <div class="form-group"><label>Full name</label><input name="fullName" ${isSignup ? "required" : ""} /></div>
         <div class="form-group"><label>Email</label><input name="email" type="email" required /></div>
         <div class="form-group"><label>Password</label><input name="password" type="password" required minlength="6" /></div>
         ${isSignup ? `
-          <div class="form-group signup-mode">
-            <label>I want to</label>
-            <select name="signupMode" id="signup-mode">
-              <option value="create">Create a new team</option>
-              <option value="join">Join existing team</option>
-            </select>
-          </div>
-          <div class="form-group" id="team-name-group">
-            <label>Team name</label><input name="teamName" placeholder="Acme Sales" />
-          </div>
-          <div class="form-group hidden" id="invite-code-group">
-            <label>Invite code</label><input name="inviteCode" placeholder="abc12345" />
+          <div class="form-group">
+            <label>Your team</label>
+            <select name="teamSlug" required>${presetTeamSelectOptions()}</select>
+            <p class="task-meta">You'll be added to this team as soon as your account is created.</p>
           </div>
         ` : ""}
         <p id="auth-error" class="auth-error hidden"></p>
@@ -68,14 +54,7 @@ function renderAuthScreen(mode = "login") {
     </div>`;
 
   if (isSignup) {
-    const modeSelect = auth.querySelector("#signup-mode");
-    const teamGroup = auth.querySelector("#team-name-group");
-    const inviteGroup = auth.querySelector("#invite-code-group");
-    modeSelect.addEventListener("change", () => {
-      const creating = modeSelect.value === "create";
-      teamGroup.classList.toggle("hidden", !creating);
-      inviteGroup.classList.toggle("hidden", creating);
-    });
+    // team picker only — no create/join toggle
   }
 
   auth.querySelector("#auth-toggle").addEventListener("click", () => renderAuthScreen(isSignup ? "login" : "signup"));
@@ -87,14 +66,8 @@ function renderAuthScreen(mode = "login") {
     errEl.classList.add("hidden");
     try {
       if (isSignup) {
-        const signupMode = fd.get("signupMode");
-        const teamName = fd.get("teamName")?.trim();
-        const inviteCode = fd.get("inviteCode")?.trim();
-        if (signupMode === "create" && !teamName) throw new Error("Enter a team name");
-        if (signupMode === "join" && !inviteCode) throw new Error("Enter an invite code");
         await signUp(fd.get("email"), fd.get("password"), fd.get("fullName"), {
-          teamName: signupMode === "create" ? teamName : null,
-          inviteCode: signupMode === "join" ? inviteCode : null,
+          teamSlug: fd.get("teamSlug"),
         });
       } else {
         await signIn(fd.get("email"), fd.get("password"));
@@ -116,25 +89,13 @@ function renderTeamSetupScreen() {
 
   auth.innerHTML = `
     <div class="auth-card">
-      <div class="brand" style="justify-content:center;padding-bottom:1rem">
-        <span class="brand-icon">◆</span>
-        <span class="brand-name">Team CRM</span>
-      </div>
-      <h2>Set up your workspace</h2>
-      <p class="auth-sub">You're signed in, but not on a team yet. Create one or join with an invite code.</p>
+      ${ploidBrandHTML()}
+      <h2>Choose your team</h2>
+      <p class="auth-sub">Pick a workspace. If you're not sure, start with Ploid Overall.</p>
       <form id="team-setup-form" class="auth-form">
-        <div class="form-group signup-mode">
-          <label>I want to</label>
-          <select name="setupMode" id="team-setup-mode">
-            <option value="create">Create a new team</option>
-            <option value="join">Join existing team</option>
-          </select>
-        </div>
-        <div class="form-group" id="setup-team-name-group">
-          <label>Team name</label><input name="teamName" placeholder="Acme Sales" />
-        </div>
-        <div class="form-group hidden" id="setup-invite-code-group">
-          <label>Invite code</label><input name="inviteCode" placeholder="abc12345" />
+        <div class="form-group">
+          <label>Team</label>
+          <select name="teamSlug" required>${presetTeamSelectOptions()}</select>
         </div>
         <p id="team-setup-error" class="auth-error hidden"></p>
         <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.5rem">Continue</button>
@@ -143,15 +104,6 @@ function renderTeamSetupScreen() {
         <button type="button" class="link-btn" id="team-setup-signout">Sign out</button>
       </p>
     </div>`;
-
-  const modeSelect = auth.querySelector("#team-setup-mode");
-  const teamGroup = auth.querySelector("#setup-team-name-group");
-  const inviteGroup = auth.querySelector("#setup-invite-code-group");
-  modeSelect.addEventListener("change", () => {
-    const creating = modeSelect.value === "create";
-    teamGroup.classList.toggle("hidden", !creating);
-    inviteGroup.classList.toggle("hidden", creating);
-  });
 
   auth.querySelector("#team-setup-signout").addEventListener("click", async () => {
     await signOut();
@@ -164,8 +116,7 @@ function renderTeamSetupScreen() {
     const errEl = auth.querySelector("#team-setup-error");
     errEl.classList.add("hidden");
     try {
-      if (fd.get("setupMode") === "create") await createTeam(fd.get("teamName"));
-      else await joinTeam(fd.get("inviteCode"));
+      await joinTeamBySlug(fd.get("teamSlug"));
       showApp();
     } catch (err) {
       errEl.textContent = err.message || "Something went wrong";
@@ -273,6 +224,7 @@ async function initAuth() {
       try {
         if (newSession) {
           await loadProfile();
+          await ensureDefaultTeam();
           showApp();
         } else {
           renderAuthScreen("login");
@@ -286,6 +238,7 @@ async function initAuth() {
     if (activeSession) {
       try {
         await loadProfile();
+        await ensureDefaultTeam();
         showApp();
       } catch (err) {
         await signOut().catch(() => {});

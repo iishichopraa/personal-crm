@@ -1,5 +1,24 @@
 let pipelineStages = [];
 
+const PRESET_TEAMS = [
+  { slug: "ploid", name: "Ploid Overall", description: "Company-wide workspace — default for new sign-ins", icon: "◆" },
+  { slug: "devs", name: "Devs", description: "Engineering and product", icon: "⌨" },
+  { slug: "sonia", name: "Sonia Team", description: "Sonia's squad", icon: "S" },
+  { slug: "kevin", name: "Kevin Team", description: "Kevin's squad", icon: "K" },
+];
+const DEFAULT_TEAM_SLUG = "ploid";
+const PRESET_TEAM_SLUGS = PRESET_TEAMS.map((t) => t.slug);
+
+function presetTeamSelectOptions(selectedSlug = DEFAULT_TEAM_SLUG) {
+  return PRESET_TEAMS.map(
+    (t) => `<option value="${t.slug}"${t.slug === selectedSlug ? " selected" : ""}>${t.name}</option>`
+  ).join("");
+}
+
+function ploidBrandHTML() {
+  return `<div class="ploid-brand"><img src="/assets/ploid-logo.png" alt="Ploid" class="ploid-logo" /></div>`;
+}
+
 const DEFAULT_PIPELINE = [
   { name: "Lead", sort_order: 0, entry_criteria: "New lead", exit_criteria: "Qualified", is_closed: false, is_won: false, stale_days: 7 },
   { name: "Qualified", sort_order: 1, entry_criteria: "Need confirmed", exit_criteria: "Proposal sent", is_closed: false, is_won: false, stale_days: 10 },
